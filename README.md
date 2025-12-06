@@ -1,124 +1,127 @@
-# Hate Speech Detection System
 
-##  Project Overview
-This project is a Machine Learning pipeline designed to detect hate speech in textual data. It utilizes Natural Language Processing (NLP) techniques for data preprocessing and feature extraction, followed by a **Multinomial Naive Bayes** classifier.
+# Hate Speech & Toxicity Detection System
 
-The system is trained to distinguish between:
-* **Hate Speech**
-* **Non-Hate Speech** (including offensive language and neutral text)
+## Project Overview
 
-##  Folder Structure
-```text
+This project is a Machine Learning application designed to detect and classify toxic content in text. Instead of simple binary classification, it distinguishes between **Hate Speech**, **Offensive Language**, and **Safe/Neutral** content.
+
+The system handles class imbalance (where hate speech samples are comparatively rare) using a **Logistic Regression model with balanced class weights**, improving minority class detection.
+
+## Key Features
+
+- Multi-Class Classification:
+  - Hate Speech: Targeted attacks based on attributes such as race, gender, religion, etc.
+  - Offensive Language: General insults, profanity, or vulgar expressions.
+  - Safe: Neutral or non-toxic text.
+- Class Imbalance Handling using `class_weight='balanced'`
+- Interactive Web Interface using Streamlit
+- Command-Line Interface (CLI) for quick predictions
+- Modular and Production-Ready Code Structure
+
+## Folder Structure
+
+```
 Hate-Speech-Detection/
 │
 ├── data/
-│   ├── raw/                 # Contains 'labeled_data.csv'
+│   ├── raw/                 # Original labeled_data.csv (Davidson et al.)
+│   └── processed/           # Cleaned and processed datasets
 │
-├── src/                     # Source code
-│   ├── preprocess.py        # Text cleaning logic (URLs, stopwords)
-│   ├── features.py          # Feature extraction (CountVectorizer)
-│   ├── train.py             # Model training and evaluation script
-│   └── __init__.py          # Package initialization
+├── notebooks/
+│   ├── 01_Exploration.ipynb # Exploratory data analysis
+│   └── 02_Evaluation.ipynb  # Confusion matrix and metrics
 │
-├── models/                  # Saved artifacts
+├── src/
+│   ├── preprocess.py        # Text cleaning and preprocessing
+│   ├── features.py          # Feature extraction logic (TF-IDF /CountVectorizer)
+│   ├── train.py             # Model training pipeline
+│   └── predict.py           # CLI inference script
+│
+├── models/
 │   ├── hate_speech_model.pkl
 │   └── vectorizer.pkl
 │
-├── requirements.txt         # Dependencies
-├── main.py                  # Entry point for the application
+├── app.py                   # Streamlit web application
+├── requirements.txt         # Project dependencies
 └── README.md                # Project documentation
 ```
 
-## Installation
+## Setup and Installation
 
-1. **Clone the repository or navigate to the project directory:**
-   ```bash
-   cd Hate_speech_detection
-   ```
+### 1. Clone the Repository
 
-2. **Install required dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+git clone <your-repo-link>
+cd Hate-Speech-Detection
+```
 
-## Usage
+### 2. Create a Virtual Environment (Optional but Recommended)
 
-### Training the Model
-To train the hate speech detection model on the labeled dataset:
+```bash
+python -m venv venv
+source venv/bin/activate   # On Windows: venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Download the Dataset
+
+Download the Hate Speech and Offensive Language Dataset from Kaggle and place  
+`labeled_data.csv` inside:
+
+```
+data/raw/
+```
+
+## How to Run
+
+### 1. Data Preprocessing
+
+Clean and prepare the text data for training.
+
+```bash
+python src/preprocess.py
+```
+
+### 2. Train the Model
+
+Train the Logistic Regression model. The trained model and vectorizer will be saved in the `models/` directory.
 
 ```bash
 python src/train.py
 ```
 
-This script will:
-- Load the dataset from `data/raw/labeled_data.csv`
-- Clean and preprocess the text
-- Extract features using CountVectorizer
-- Train a Multinomial Naive Bayes classifier
-- Evaluate the model on a test set
-- Save the trained model and vectorizer to the `models/` directory
+### 3. Run the Web Application
 
-### Model Performance
-The model outputs:
-- **Accuracy Score**: Overall accuracy on the test set
-- **Confusion Matrix**: True positives, true negatives, false positives, and false negatives
-- **Classification Report**: Precision, recall, and F1-score (available in extended version)
+Launch the Streamlit web interface.
 
-## Dataset
+```bash
+streamlit run app.py
+```
 
-The project uses the **labeled_data.csv** dataset containing:
-- `tweet`: The text content of tweets
-- `class`: Label indicating the type of content
-  - `0`: Hate Speech
-  - `1`: Offensive Language
-  - `2`: Neutral/Neither
 
-The dataset is preprocessed to create a binary classification problem:
-- **Class 1**: Hate Speech
-- **Class 0**: Non-Hate Speech (offensive language + neutral)
+## Model Details
 
-## Architecture
+- Algorithm: Logistic Regression
+- Class Weights: Balanced
+- Feature Extraction: CountVectorizer or TF-IDF (configurable)
+- Evaluation Metrics:
+  - Offensive Language: High precision and recall (majority class)
+  - Hate Speech: Optimized for recall to reduce false negatives
 
-### 1. **Preprocessing (preprocess.py)**
-- Converts text to lowercase
-- Removes URLs using regex patterns
-- Removes punctuation
-- Filters out English stopwords (e.g., "the", "is", "and")
+## Tech Stack
 
-### 2. **Feature Extraction (features.py)**
-- Uses `CountVectorizer` from scikit-learn
-- Converts text into numerical feature vectors
-- Maximum of 5000 features
-- Saves the vectorizer for consistent transformation during inference
-
-### 3. **Model Training (train.py)**
-- Splits data into 80% training and 20% testing
-- Trains a **Multinomial Naive Bayes** classifier
-- Evaluates performance on test set
-- Persists the model and vectorizer as pickle files
-
-## Dependencies
-
-- **pandas**: Data manipulation and loading
-- **numpy**: Numerical computations
-- **scikit-learn**: Machine learning algorithms and metrics
-- **nltk**: Natural language processing and stopwords
-- **matplotlib & seaborn**: Data visualization (optional)
-
-## Future Enhancements
-
-- [ ] Implement model with TF-IDF instead of CountVectorizer
-- [ ] Add support for deep learning models (e.g., LSTM, BERT)
-- [ ] Create a Flask/FastAPI web application for real-time predictions
-- [ ] Implement cross-validation for better model evaluation
-- [ ] Add data visualization and exploratory data analysis
-- [ ] Deploy model as a REST API
-- [ ] Support multiple languages
+- Language: Python 3.x
+- Machine Learning: Scikit-learn
+- NLP: NLTK
+- Data Processing: Pandas, NumPy
+- Visualization: Matplotlib, Seaborn
+- Deployment/UI: Streamlit
 
 ## License
 
-This project is part of the SparkIIT internship program.
-
-## Author
-
-Rahul Sharma
+This project is open-source and licensed under the MIT License.
